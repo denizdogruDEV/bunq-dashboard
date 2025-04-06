@@ -1,0 +1,406 @@
+:root {
+  --bunq-blue: #1d9bc9;
+  --bunq-green: #3dd677;
+  --bunq-red: #ff5722;
+  --dark-text: #333333;
+  --light-text: #777777;
+  --light-bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --border-color: #e0e0e0;
+  --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--dark-text);
+  background-color: var(--light-bg);
+}
+
+/* App container */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Login page */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--bunq-blue) 0%, var(--bunq-green) 100%);
+  padding: 20px;
+}
+
+.login-form-wrapper {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 40px;
+  width: 100%;
+  max-width: 450px;
+  text-align: center;
+}
+
+.login-form-wrapper h1 {
+  margin-bottom: 16px;
+  color: var(--bunq-blue);
+}
+
+.test-mode-banner {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  text-align: center;
+  border: 1px solid #ffeeba;
+}
+
+.login-form-wrapper p {
+  margin-bottom: 24px;
+  color: var(--light-text);
+}
+
+.login-form {
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.form-group small {
+  display: block;
+  margin-top: 8px;
+  color: var(--light-text);
+  font-size: 0.8rem;
+}
+
+.login-button {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--bunq-blue);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.login-button:hover {
+  background-color: #1789b2;
+}
+
+.login-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: var(--bunq-red);
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+/* Dashboard */
+.dashboard {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-header {
+  background-color: var(--bunq-blue);
+  color: white;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-info button {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.user-info button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.dashboard-content {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+  padding: 24px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  font-weight: 600;
+  color: var(--light-text);
+}
+
+.error {
+  background-color: #ffebee;
+  color: var(--bunq-red);
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 24px;
+  font-size: 14px;
+}
+
+/* Accounts section */
+.accounts-section {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 20px;
+  height: fit-content;
+}
+
+.accounts-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  color: var(--dark-text);
+}
+
+.accounts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.account-card {
+  padding: 16px;
+  border-radius: 6px;
+  background-color: var(--light-bg);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.account-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.account-card.selected {
+  border-left: 4px solid var(--bunq-green);
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.account-card h3 {
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.account-balance {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--bunq-blue);
+}
+
+.no-accounts {
+  color: var(--light-text);
+  text-align: center;
+  padding: 20px 0;
+}
+
+/* Transactions section */
+.transactions-section {
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+.transactions-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 16px;
+  color: var(--dark-text);
+}
+
+.transactions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.transaction-item {
+  display: grid;
+  grid-template-columns: 100px 1fr 120px;
+  gap: 16px;
+  padding: 12px;
+  border-radius: 6px;
+  background-color: var(--light-bg);
+  transition: background-color 0.2s;
+}
+
+.transaction-item:hover {
+  background-color: white;
+}
+
+.transaction-item.incoming .transaction-amount {
+  color: var(--bunq-green);
+}
+
+.transaction-item.outgoing .transaction-amount {
+  color: var(--bunq-red);
+}
+
+.transaction-date {
+  font-size: 0.9rem;
+  color: var(--light-text);
+}
+
+.transaction-details {
+  overflow: hidden;
+}
+
+.counterparty {
+  font-weight: 600;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.description {
+  font-size: 0.9rem;
+  color: var(--light-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.transaction-amount {
+  font-weight: 600;
+  text-align: right;
+}
+
+.no-transactions {
+  color: var(--light-text);
+  text-align: center;
+  padding: 40px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .transaction-item {
+    grid-template-columns: 1fr 120px;
+  }
+  
+  .transaction-date {
+    grid-column: 1 / -1;
+    margin-bottom: 8px;
+  }
+}
+
+/* Additional styles for the updated components */
+
+.account-card {
+  position: relative;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.account-card.selected {
+  /* This will now use the color from the account data instead of hard-coded green */
+  border-left-width: 4px;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.account-details {
+  margin-bottom: 8px;
+}
+
+.account-name {
+  font-size: 0.9rem;
+  color: var(--light-text);
+}
+
+.account-iban-preview {
+  font-size: 0.8rem;
+  color: var(--light-text);
+  opacity: 0.8;
+  margin-top: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-iban {
+  font-size: 0.9rem;
+  color: var(--light-text);
+  margin-top: 4px;
+  margin-bottom: 12px;
+}
+
+/* Add a subtle background indicator for test mode */
+.test-mode-indicator {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(255, 243, 205, 0.8);
+  color: #856404;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  text-align: center;
+  z-index: 1000;
+}
