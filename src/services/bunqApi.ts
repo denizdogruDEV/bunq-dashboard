@@ -1,34 +1,9 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { User, MonetaryAccount, PaymentData, Balance } from '../types';
 
 // Configuration for test/demo mode
 const IS_TEST_MODE = true; // Set this to false when you have a real API key
 const API_KEY = IS_TEST_MODE ? 'TEST_API_KEY' : 'YOUR_API_KEY';
 const BASE_URL = 'https://api.bunq.com/v1';
-
-// Create an axios instance with default configuration
-const bunqApiClient: AxiosInstance = axios.create({
-  baseURL: BASE_URL,
-  headers: {
-    'X-Bunq-Client-Authentication': API_KEY,
-    'Content-Type': 'application/json',
-    'User-Agent': 'BunqReactDashboard'
-  }
-});
-
-// Request interceptor to add authentication headers
-bunqApiClient.interceptors.request.use(
-  (config: AxiosRequestConfig): AxiosRequestConfig => {
-    const token = localStorage.getItem('bunq_session_token');
-    if (token && config.headers) {
-      config.headers['X-Bunq-Client-Authentication'] = token;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
 
 // Mock data for test mode
 const MOCK_DATA = {
@@ -164,6 +139,34 @@ function mapMonetaryAccountToAccount(monetaryAccount: MonetaryAccount) {
   };
 }
 
+// Function for future real API calls when IS_TEST_MODE is false
+async function fetchFromApi(endpoint: string, method = 'GET', data?: any): Promise<any> {
+  if (IS_TEST_MODE) {
+    throw new Error('fetchFromApi should not be called in test mode');
+  }
+
+  const token = localStorage.getItem('bunq_session_token');
+  const headers: HeadersInit = {
+    'X-Bunq-Client-Authentication': token || API_KEY,
+    'Content-Type': 'application/json',
+    'User-Agent': 'BunqReactDashboard'
+  };
+
+  const options: RequestInit = {
+    method,
+    headers,
+    body: data ? JSON.stringify(data) : undefined
+  };
+
+  const response = await fetch(`${BASE_URL}${endpoint}`, options);
+  
+  if (!response.ok) {
+    throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+  }
+  
+  return await response.json();
+}
+
 // API methods
 export const bunqApi = {
   // Authentication
@@ -175,36 +178,29 @@ export const bunqApi = {
     }
     
     try {
-      // Real API implementation
-      const installationResponse = await bunqApiClient.post('/installation', {
+      // Real API implementation using fetch instead of axios
+      // Step 1: Installation
+      const installationResponse = await fetchFromApi('/installation', 'POST', {
         client_public_key: 'YOUR_PUBLIC_KEY'
       });
       
       // Store the installation token
-      const installationToken = installationResponse.data.Response[1].Token.token;
+      const installationToken = installationResponse.Response[1].Token.token;
       localStorage.setItem('bunq_installation_token', installationToken);
       
-      // Create a device server
-      await bunqApiClient.post('/device-server', {
+      // Step 2: Create a device server
+      await fetchFromApi('/device-server', 'POST', {
         description: 'React Dashboard',
         secret: API_KEY,
         permitted_ips: ['*']
-      }, {
-        headers: {
-          'X-Bunq-Client-Authentication': installationToken
-        }
       });
       
-      // Create a session
-      const sessionResponse = await bunqApiClient.post('/session-server', {
+      // Step 3: Create a session
+      const sessionResponse = await fetchFromApi('/session-server', 'POST', {
         secret: API_KEY
-      }, {
-        headers: {
-          'X-Bunq-Client-Authentication': installationToken
-        }
       });
       
-      const sessionToken = sessionResponse.data.Response[1].Token.token;
+      const sessionToken = sessionResponse.Response[1].Token.token;
       localStorage.setItem('bunq_session_token', sessionToken);
       
       return { success: true };
@@ -223,8 +219,8 @@ export const bunqApi = {
     }
     
     try {
-      const response = await bunqApiClient.get('/user');
-      return response.data.Response;
+      const response = await fetchFromApi('/user');
+      return response.Response;
     } catch (error) {
       console.error('Error fetching user info:', error);
       throw error;
@@ -240,8 +236,8 @@ export const bunqApi = {
     }
     
     try {
-      const response = await bunqApiClient.get('/user/{userId}/monetary-account');
-      return response.data.Response;
+      const response = await fetchFromApi('/user/{userId}/monetary-account');
+      return response.Response;
     } catch (error) {
       console.error('Error fetching accounts:', error);
       throw error;
@@ -257,8 +253,8 @@ export const bunqApi = {
     }
     
     try {
-      const response = await bunqApiClient.get(`/user/{userId}/monetary-account/${accountId}/payment`);
-      return response.data.Response;
+      const response = await fetchFromApi(`/user/{userId}/monetary-account/${accountId}/payment`);
+      return response.Response;
     } catch (error) {
       console.error('Error fetching transactions:', error);
       throw error;
@@ -275,8 +271,8 @@ export const bunqApi = {
     }
     
     try {
-      const response = await bunqApiClient.get(`/user/{userId}/monetary-account/${accountId}`);
-      return response.data.Response[0].MonetaryAccountBank.balance;
+      const response = await fetchFromApi(`/user/{userId}/monetary-account/${accountId}`);
+      return response.Response[0].MonetaryAccountBank.balance;
     } catch (error) {
       console.error('Error fetching balance:', error);
       throw error;
