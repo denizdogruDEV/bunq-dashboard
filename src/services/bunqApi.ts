@@ -1,4 +1,4 @@
-import { User, MonetaryAccount, PaymentData, Balance } from '../types';
+import { User, MonetaryAccountResponse, PaymentData, Balance } from '../types';
 
 // Configuration for test/demo mode
 const IS_TEST_MODE = true; // Set this to false when you have a real API key
@@ -120,14 +120,42 @@ function generateMockTransactions(count: number, accountId: number): PaymentData
   return transactions;
 }
 
+// Generate a consistent color based on account ID
+function generateAccountColor(accountId: number): string {
+  // Array of colors for accounts
+  const colors = [
+    '#4CAF50', // Green
+    '#2196F3', // Blue
+    '#FFC107', // Amber
+    '#9C27B0', // Purple
+    '#FF5722', // Deep Orange
+    '#00BCD4', // Cyan
+    '#3F51B5', // Indigo
+    '#795548'  // Brown
+  ];
+  
+  // Use account ID to pick a color from the array
+  return colors[accountId % colors.length];
+}
+
 // Map a monetary account to a simplified account format
-function mapMonetaryAccountToAccount(monetaryAccount: MonetaryAccount) {
+function mapMonetaryAccountToAccount(monetaryAccount: MonetaryAccountResponse): Account {
   if (!monetaryAccount.MonetaryAccountBank) {
-    return null;
+    // Return a default account structure instead of null
+    return {
+      id: 0,
+      description: 'Unknown Account',
+      balance: '0',
+      currency: 'EUR',
+      iban: '',
+      accountName: 'Unknown Account',
+      displayName: 'Unknown Account',
+      color: '#CCCCCC' // Default gray color for unknown accounts
+    };
   }
   
   const account = monetaryAccount.MonetaryAccountBank;
-  const ibanAlias = account.alias?.find(a => a.type === 'IBAN') || account.alias?.[0];
+  const ibanAlias = account.alias?.find((a: any) => a.type === 'IBAN') || account.alias?.[0];
   
   return {
     id: account.id,
@@ -135,7 +163,9 @@ function mapMonetaryAccountToAccount(monetaryAccount: MonetaryAccount) {
     balance: account.balance.value,
     currency: account.balance.currency,
     iban: ibanAlias?.value || '',
-    accountName: ibanAlias?.name || account.description || 'Account'
+    accountName: ibanAlias?.name || account.description || 'Account',
+    displayName: ibanAlias?.name || account.description || 'Account',
+    color: generateAccountColor(account.id) // Add a color based on account ID
   };
 }
 
@@ -168,6 +198,18 @@ async function fetchFromApi(endpoint: string, method = 'GET', data?: any): Promi
 }
 
 // API methods
+// Define the Account type here to avoid circular dependencies
+interface Account {
+  id: number;
+  description: string;
+  balance: string;
+  currency: string;
+  iban: string;
+  accountName: string;
+  displayName?: string;
+  color?: string;
+}
+
 export const bunqApi = {
   // Authentication
   async authenticate(): Promise<{ success: boolean; error?: any }> {
@@ -228,11 +270,11 @@ export const bunqApi = {
   },
   
   // Get monetary accounts (bank accounts)
-  async getAccounts(): Promise<MonetaryAccount[]> {
+  async getAccounts(): Promise<MonetaryAccountResponse[]> {
     if (IS_TEST_MODE) {
       // Return mock accounts with a delay to simulate API call
       await new Promise(resolve => setTimeout(resolve, 700));
-      return MOCK_DATA.accounts as MonetaryAccount[];
+      return MOCK_DATA.accounts as MonetaryAccountResponse[];
     }
     
     try {

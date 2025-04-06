@@ -1,27 +1,53 @@
 /**
- * Format a number as currency with the specified currency code
- * @param amount - The amount to format
- * @param currency - The currency code (default: EUR)
+ * Formats a currency value with the appropriate currency symbol
+ * @param value The value to format as a string
+ * @param currency The currency code (e.g., 'EUR', 'USD')
  * @returns Formatted currency string
  */
-export const formatCurrency = (amount: string | number, currency: string = 'EUR'): string => {
-    const numericAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
-    
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency
-    }).format(numericAmount);
-  };
+export function formatCurrency(value: string, currency: string): string {
+  const numValue = parseFloat(value);
   
-  /**
-   * Format a date object into a readable date string
-   * @param date - The date to format
-   * @returns Formatted date string
-   */
-  export const formatDate = (date: Date): string => {
-    return new Intl.DateTimeFormat('en-US', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    }).format(date);
-  };
+  // Check if the value is NaN
+  if (isNaN(numValue)) {
+    return '0.00';
+  }
+
+  // Format based on currency
+  switch (currency) {
+    case 'EUR':
+      return `€${numValue.toFixed(2)}`;
+    case 'USD':
+      return `$${numValue.toFixed(2)}`;
+    case 'GBP':
+      return `£${numValue.toFixed(2)}`;
+    default:
+      return `${numValue.toFixed(2)} ${currency}`;
+  }
+}
+
+/**
+ * Formats a date to a readable string
+ * @param date The date to format
+ * @returns Formatted date string
+ */
+export function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+/**
+ * Truncates text to a specified length with ellipsis
+ * @param text The text to truncate
+ * @param maxLength Maximum length before truncation
+ * @returns Truncated text string
+ */
+export function truncateText(text: string, maxLength: number): string {
+  if (!text) return '';
+  if (text.length <= maxLength) return text;
+  return text.substring(0, maxLength) + '...';
+}

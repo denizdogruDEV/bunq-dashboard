@@ -1,93 +1,64 @@
-// Updated type definitions based on actual bunq API responses
+// User types
+export interface UserPerson {
+  id: number;
+  display_name: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+}
 
 export interface User {
-  UserPerson: {
-    id: number;
-    display_name: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-  };
+  UserPerson: UserPerson;
 }
 
-export interface Balance {
-  currency: string;
-  value: string;
-}
-
-export interface Alias {
-  type: string;
-  value: string;
-  name: string;
-}
-
-export interface Avatar {
-  uuid: string;
-  image: {
-    attachment_public_uuid: string;
-    height: number;
-    width: number;
-    content_type: string;
-    urls: {
-      type: string;
-      url: string;
-    }[];
-  }[];
-  anchor_uuid: string;
-  style: string;
-}
-
-export interface Setting {
-  color: string;
-  icon: string | null;
-  default_avatar_status: string;
-  restriction_chat: string;
-  sdd_expiration_action: string;
-}
-
+// Account types
 export interface MonetaryAccountBank {
   id: number;
-  created: string;
-  updated: string;
-  alias: Alias[];
-  avatar: Avatar;
-  balance: Balance;
-  country: string;
-  currency: string;
-  display_name: string;
-  daily_limit: Balance;
   description: string;
-  public_uuid: string;
-  status: string;
-  sub_status: string;
-  timezone: string;
-  user_id: number;
-  setting: Setting;
-  overdraft_limit: Balance;
+  balance: Balance;
+  alias?: {
+    type: string;
+    value: string;
+    name: string;
+  }[];
 }
 
 export interface MonetaryAccountResponse {
   MonetaryAccountBank: MonetaryAccountBank;
 }
 
-export interface ApiResponse<T> {
-  Response: T[];
-  Pagination?: {
-    future_url?: string;
-    newer_url?: string;
-    older_url?: string;
-  };
+export interface Balance {
+  value: string;
+  currency: string;
 }
 
-// Simplified types for the UI components
 export interface Account {
   id: number;
   description: string;
   balance: string;
   currency: string;
-  displayName: string;
-  iban: string | null;
-  color: string;
+  iban: string;
+  accountName: string;
+  color?: string;      // Optional color property
+  displayName?: string; // Optional displayName property
+}
+
+// Transaction types
+export interface Payment {
+  id: number;
+  amount: {
+    value: string;
+    currency: string;
+  };
+  counterparty_alias: {
+    display_name: string;
+  };
+  description: string;
+  created: string;
+}
+
+export interface PaymentData {
+  Payment: Payment;
 }
 
 export interface Transaction {
@@ -99,18 +70,7 @@ export interface Transaction {
   created: Date;
 }
 
-export interface PaymentData {
-  Payment: {
-    id: number;
-    amount: Balance;
-    counterparty_alias: {
-      display_name: string;
-    };
-    description: string;
-    created: string;
-  };
-}
-
+// Auth context type
 export interface AuthContextType {
   user: User[] | null;
   loading: boolean;
